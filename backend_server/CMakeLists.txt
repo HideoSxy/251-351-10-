@@ -12,9 +12,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network Sql)
 
 add_executable(main_server
     main_server.cpp
-    mytcpserver.h       mytcpserver.cpp
-    request_handler.h   request_handler.cpp
-    database.h   database.cpp
+    mytcpserver.h           mytcpserver.cpp
+    requesthandler.h        requesthandler.cpp
+    functionstoserver.h     functionstoserver.cpp
+    databasemanager.h       databasemanager.cpp
 )
 
 target_link_libraries(main_server

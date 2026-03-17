@@ -7,6 +7,8 @@
 #include <QtNetwork>
 #include <QByteArray>
 #include <QDebug>
+#include <QHash>
+#include <QString>
 
 class MyTcpServer : public QObject
 {
@@ -21,5 +23,6 @@ public slots:
 private:
     QTcpServer *mTcpServer;
     QHash<QTcpSocket*, QByteArray> mBuffers;
+    QHash<QTcpSocket*, QString> mRoles;
 };
-#endif // MYTCPSERVER_H
+#endif

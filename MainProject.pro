@@ -10,7 +10,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    backend_server/functionforserver.cpp \
+    backend_server/functionstoserver.cpp \
     backend_server/main_server.cpp \
     backend_server/mytcpserver.cpp \
     backend_server/requesthandler.cpp \
@@ -18,8 +18,8 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
-    backend_server/database.h \
-    backend_server/functionforserver.h \
+    backend_server/databasemanager.h \
+    backend_server/functionstoserver.h \
     backend_server/mytcpserver.h \
     backend_server/requesthandler.h \
     database.h \
