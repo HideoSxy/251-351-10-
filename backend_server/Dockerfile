@@ -1,10 +1,10 @@
-# Берём Ubuntu 22.04 как основу
-FROM ubuntu:22.04
+# Этап 1: сборка проекта
+FROM ubuntu:22.04 AS builder
 
 # Отключаем интерактивные вопросы при установке пакетов
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Устанавливаем Qt5, CMake и компилятор
+# Устанавливаем инструменты для сборки
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -13,15 +13,27 @@ RUN apt-get update && apt-get install -y \
     libqt5network5 \
     && rm -rf /var/lib/apt/lists/*
 
-# Копируем все исходники в контейнер в папку /app
+# Копируем исходники и собираем проект
 WORKDIR /app
 COPY . .
-
-# Собираем проект
 RUN mkdir build && cd build && cmake .. && make -j$(nproc)
 
-# Говорим Docker что сервер слушает порт 33333
+# Этап 2: создание минимального рабочего образа
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    libqt5core5a \
+    libqt5network5 \
+    libqt5sql5 \
+    libqt5sql5-sqlite \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app/build/main_server /app/main_server
+
+WORKDIR /app
+
 EXPOSE 33333
 
-# Команда запуска при старте контейнера
-CMD ["./build/main_server"]
+CMD ["./main_server"]
