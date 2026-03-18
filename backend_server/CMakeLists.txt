@@ -15,7 +15,6 @@ add_executable(main_server
     mytcpserver.h           mytcpserver.cpp
     requesthandler.h        requesthandler.cpp
     functionstoserver.h     functionstoserver.cpp
-    databasemanager.h       databasemanager.cpp
 )
 
 target_link_libraries(main_server
