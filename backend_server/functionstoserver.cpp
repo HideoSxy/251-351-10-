@@ -1,18 +1,11 @@
 #include "functionstoserver.h"
+#include "databasemanager.h"
 
-#include <QTcpSocket>          // связь с БД
-#include <QCryptographicHash>  // SHA-384
 #include <QStringList>
+#include <QCryptographicHash>
 #include <QDebug>
-#include <cmath>
 
-// TODO:
-// class DbClient {
-    // Синглтон
-    // SQL query
-// };
-
-// SHA-384 строки (to hex)
+// Хэширование SHA-384
 static QString sha384Hex(const QString& text) {
     QByteArray hash = QCryptographicHash::hash(text.toUtf8(), QCryptographicHash::Sha384);
     return QString(hash.toHex());
@@ -30,15 +23,23 @@ QString fn_register(const QString &payload) {
     if (login.isEmpty() || pass.isEmpty())
         return "REGISTER_ERR: Login or password cannot be empty\r\n";
 
-    QString hash = sha384Hex(pass); // Хэшируем пароль алгоритмом SHA-384
+    QString hash = sha384Hex(pass);
 
-    return "REGISTER_WITHOUT_DB: " + login + " successfully registered\r\n";
+    DatabaseManager &db = DatabaseManager::instance();
 
-    // qDebug() << "[fn_register] STUB called with:" << payload;
-    // return "REGISTER_ERR: Not implemented yet (stub)\r\n";
+    if (!db.open()) {
+        return "REGISTER_ERR: Cannot open database\r\n";
+    }
 
-    // TODO: Проверка существует ли пользователь в БД
-    // TODO: Добавляем пользователя в БД
+    if (db.userExists(login)) {
+        return "REGISTER_ERR: User already exists\r\n";
+    }
+
+    if (!db.addUser(login, hash)) {
+        return "REGISTER_ERR: Failed to insert user into database\r\n";
+    }
+
+    return "REGISTER_OK: " + login + " successfully registered\r\n";
 }
 
 // Авторизация
@@ -55,12 +56,19 @@ QString fn_auth(const QString &payload) {
 
     QString hash = sha384Hex(pass);
 
-    return "AUTH_WITHOUT_DB: " + login + " logged in successfully\r\n";
+    DatabaseManager &db = DatabaseManager::instance();
 
-    // qDebug() << "[fn_auth] STUB called with:" << payload;
-    // return "AUTH_ERR: Not implemented yet (stub)\r\n";
+    if (!db.open()) {
+        return "AUTH_ERR: Cannot open database\r\n";
+    }
 
-    // TODO: Запрос пользователя с БД с такими данными (проверка)
+    if (!db.checkUser(login, hash)) {
+        return "AUTH_ERR: Invalid login or password\r\n";
+    }
+
+    QString role = db.getUserRole(login); // например, "user" или "admin"
+
+    return "AUTH_OK: " + login + " logged in successfully (" + role + ")\r\n";
 }
 
 // SHA-384
@@ -71,45 +79,10 @@ QString fn_sha384(const QString &payload) {
     return "SHA384_OK: " + sha384Hex(payload) + "\r\n";
 }
 
-// Проверка RSA на малых числах (?)
-QString fn_rsa_gen() {
-    // TODO: Учебный RSA
-    // payload = "d,n,числа через пробел"
-    qDebug() << "[fn_rsa_gen] STUB called";
-    return "RSA_DEC_ERR: Not implemented yet (stub)\r\n";
-}
-
-QString fn_rsa_encrypt(const QString &payload) {
-    // TODO: Шифрование rsa
-    // payload = "e,n,текст"
-    qDebug() << "[fn_rsa_encrypt] STUB called with:" << payload;
-    return "RSA_ENC_ERR: Not implemented yet (stub)\r\n";
-}
-
-QString fn_rsa_decrypt(const QString &payload) {
-    // TODO: Дешифрование rsa
-    // payload = "d,n,числа через пробел"
-    qDebug() << "[fn_rsa_decrypt] STUB called with:" << payload;
-    return "RSA_DEC_ERR: Not implemented yet (stub)\r\n";
-}
-
-QString fn_chord(const QString &payload) {
-    // TODO: Реализовать метод хорд
-    // payload = "a,b,eps"
-    qDebug() << "[fn_chord] STUB called with:" << payload;
-    return "CHORD_ERR: Not implemented yet (stub)\r\n";
-}
-
-QString fn_embed(const QString &payload) {
-    // TODO: Реализовать LSB-стеганографию
-    // payload = "login,image_path,message"
-    qDebug() << "[fn_embed] STUB called with:" << payload;
-    return "EMBED_ERR: Not implemented yet (stub)\r\n";
-}
-
-QString fn_extract(const QString &payload) {
-    // TODO: Реализовать извлечение LSB-стеганографии
-    // payload = "image_path"
-    qDebug() << "[fn_extract] STUB called with:" << payload;
-    return "EXTRACT_ERR: Not implemented yet (stub)\r\n";
-}
+// Заглушки для остальных функций
+QString fn_rsa_gen() { qDebug() << "[fn_rsa_gen] STUB called"; return "RSA_DEC_ERR: Not implemented yet\r\n"; }
+QString fn_rsa_encrypt(const QString &payload) { qDebug() << "[fn_rsa_encrypt] STUB called"; return "RSA_ENC_ERR: Not implemented yet\r\n"; }
+QString fn_rsa_decrypt(const QString &payload) { qDebug() << "[fn_rsa_decrypt] STUB called"; return "RSA_DEC_ERR: Not implemented yet\r\n"; }
+QString fn_chord(const QString &payload) { qDebug() << "[fn_chord] STUB called"; return "CHORD_ERR: Not implemented yet\r\n"; }
+QString fn_embed(const QString &payload) { qDebug() << "[fn_embed] STUB called"; return "EMBED_ERR: Not implemented yet\r\n"; }
+QString fn_extract(const QString &payload) { qDebug() << "[fn_extract] STUB called"; return "EXTRACT_ERR: Not implemented yet\r\n"; }

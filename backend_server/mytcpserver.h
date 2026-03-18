@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QSqlDatabase>
 
 #include <QtNetwork>
 #include <QByteArray>
@@ -15,6 +16,7 @@ class MyTcpServer : public QObject
     Q_OBJECT
 public:
     explicit MyTcpServer(QObject *parent = nullptr);
+    
     ~MyTcpServer();
 public slots:
     void slotNewConnection();
@@ -22,6 +24,7 @@ public slots:
     void slotServerRead();
 private:
     QTcpServer *mTcpServer;
+    QSqlDatabase db;
     QHash<QTcpSocket*, QByteArray> mBuffers;
     QHash<QTcpSocket*, QString> mRoles;
 };

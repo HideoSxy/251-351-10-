@@ -5,7 +5,7 @@
 
 class RequestHandler {
 public:
-    static QString handle(const QString &rawCommand, const QString &role = "");
+    static QString handle(const QString &rawCommand, QString &role);
 };
 
 #endif
