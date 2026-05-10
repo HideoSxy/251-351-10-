@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network Sql)
+find_package(PNG REQUIRED)
 
 add_executable(main_server
     main_server.cpp
@@ -16,11 +17,13 @@ add_executable(main_server
     requesthandler.h        requesthandler.cpp
     functionstoserver.h     functionstoserver.cpp
     databasemanager.h       databasemanager.cpp
+    stego.h                 stego.cpp
 )
 
 target_link_libraries(main_server
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Sql
+    PNG::PNG  # подключаем libpng
 )
 

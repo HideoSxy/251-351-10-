@@ -46,8 +46,8 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     if (action == "rsa_enc") return fn_rsa_encrypt(payload);
     if (action == "rsa_dec") return fn_rsa_decrypt(payload);
     if (action == "chord") return fn_chord(payload);
-    if (action == "embed") return fn_embed(payload);
-    if (action == "extract") return fn_extract(payload);
+    // if (action == "embed") return fn_embed(payload);
+    // if (action == "extract") return fn_extract(payload);
 
     // =========================
     // ТОЛЬКО ДЛЯ ADMIN
