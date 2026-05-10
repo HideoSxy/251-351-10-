@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y \
     cmake \
     qtbase5-dev \
     libqt5sql5-sqlite \
-    libqt5network5 \ \
-    libpng
+    libqt5network5 \
+    libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Копируем исходники и собираем проект
@@ -29,9 +29,11 @@ RUN apt-get update && apt-get install -y \
     libqt5network5 \
     libqt5sql5 \
     libqt5sql5-sqlite \
+    libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/build/main_server /app/main_server
+COPY test.png /app/test.png
 
 WORKDIR /app
 
