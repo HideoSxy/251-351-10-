@@ -1,7 +1,7 @@
 #include "requesthandler.h"
 #include "functionstoserver.h"
 #include "databasemanager.h"
-#include "stego.h"
+#include "func/stego.h"
 
 #include <QStringList>
 #include <QDebug>

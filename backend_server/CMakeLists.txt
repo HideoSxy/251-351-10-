@@ -18,7 +18,7 @@ add_executable(main_server
     functionstoserver.h     functionstoserver.cpp
     databasemanager.h       databasemanager.cpp
     func/sha384.h           func/sha384.cpp
-    stego.h                 stego.cpp
+    func/stego.h            func/stego.cpp
 )
 
 target_link_libraries(main_server
