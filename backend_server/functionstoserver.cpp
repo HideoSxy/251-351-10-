@@ -1,15 +1,11 @@
 #include "functionstoserver.h"
 #include "databasemanager.h"
 
+#include "func/sha384.h"
+
 #include <QStringList>
 #include <QCryptographicHash>
 #include <QDebug>
-
-// Хэширование SHA-384
-static QString sha384Hex(const QString& text) {
-    QByteArray hash = QCryptographicHash::hash(text.toUtf8(), QCryptographicHash::Sha384);
-    return QString(hash.toHex());
-}
 
 // Регистрация
 QString fn_register(const QString &payload) {
@@ -23,7 +19,7 @@ QString fn_register(const QString &payload) {
     if (login.isEmpty() || pass.isEmpty())
         return "REGISTER_ERR: Login or password cannot be empty\r\n";
 
-    QString hash = sha384Hex(pass);
+    QString hash = func_sha384(pass);
 
     DatabaseManager &db = DatabaseManager::instance();
 
@@ -54,7 +50,7 @@ QString fn_auth(const QString &payload) {
     if (login.isEmpty() || pass.isEmpty())
         return "AUTH_ERR: Login or password cannot be empty\r\n";
 
-    QString hash = sha384Hex(pass);
+    QString hash = func_sha384(pass);
 
     DatabaseManager &db = DatabaseManager::instance();
 
@@ -76,7 +72,7 @@ QString fn_sha384(const QString &payload) {
     if (payload.trimmed().isEmpty())
         return "SHA384_ERR: No input text\r\n";
 
-    return "SHA384_OK: " + sha384Hex(payload) + "\r\n";
+    return "SHA384_OK: " + func_sha384(payload) + "\r\n";
 }
 
 // Заглушки для остальных функций
