@@ -4,7 +4,6 @@
 #include "func/sha384.h"
 
 #include <QStringList>
-#include <QCryptographicHash>
 #include <QDebug>
 
 // Регистрация

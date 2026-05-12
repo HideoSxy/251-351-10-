@@ -1,6 +1,5 @@
 #include "sha384.h"
 
-#include <QCryptographicHash>
 #include <QStringList>
 
 static inline uint64_t rotr64(uint64_t x, int n) {
