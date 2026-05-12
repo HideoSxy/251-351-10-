@@ -17,6 +17,7 @@ add_executable(main_server
     requesthandler.h        requesthandler.cpp
     functionstoserver.h     functionstoserver.cpp
     databasemanager.h       databasemanager.cpp
+    func/sha384.h           func/sha384.cpp
     stego.h                 stego.cpp
 )
 
