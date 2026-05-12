@@ -2,6 +2,12 @@ QT += core gui
 QT += network
 QT += sql
 
+INCLUDEPATH += C:/msys64/mingw64/include
+
+LIBS += -LC:/msys64/mingw64/lib \
+        -lpng16 \
+        -lz
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
