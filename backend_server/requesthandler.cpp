@@ -1,6 +1,7 @@
 #include "requesthandler.h"
 #include "functionstoserver.h"
 #include "databasemanager.h"
+#include "stego.h"
 
 #include <QStringList>
 #include <QDebug>
@@ -34,6 +35,8 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
         return response;
     }
 
+
+
     // =========================
     // ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
     // =========================
@@ -46,8 +49,25 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     if (action == "rsa_enc") return fn_rsa_encrypt(payload);
     if (action == "rsa_dec") return fn_rsa_decrypt(payload);
     if (action == "chord") return fn_chord(payload);
-    if (action == "embed") return fn_embed(payload);
-    if (action == "extract") return fn_extract(payload);
+
+
+    if (action == "embed") {
+        QStringList args = payload.split(",");
+
+        QString imagein = args[0].trimmed();
+        QString imageout = args[1].trimmed();
+        QString message = args[2].trimmed();
+
+        QString response = fn_embed(imagein, imageout, message) ? "Success." : "Error.";
+
+        return response;
+    }
+
+    if (action == "extract") {
+        QString response = fn_extract(payload);
+
+        return response;
+    }
 
     // =========================
     // ТОЛЬКО ДЛЯ ADMIN
