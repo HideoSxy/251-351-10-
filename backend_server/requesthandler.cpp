@@ -17,9 +17,7 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     QString action = parts[0].toLower().trimmed();
     QString payload = (parts.size() > 1) ? parts[1].trimmed() : "";
 
-    // =========================
-    // ДОСТУПНО ВСЕМ
-    // =========================
+    // Доступно всем
     if (action == "reg") {
         return fn_register(payload);
     }
@@ -27,19 +25,21 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     if (action == "auth") {
         QString response = fn_auth(payload);
 
-        // если успешная авторизация — выставляем роль
+        // выставляем роль
         if (response.startsWith("AUTH_OK:")) {
-            role = response.mid(8).trimmed(); // после AUTH_OK:
+            QString afterTag = response.mid(9).trimmed();
+            int start = afterTag.lastIndexOf('(');
+            int end   = afterTag.lastIndexOf(')');
+            if (start != -1 && end != -1 && end > start)
+                role = afterTag.mid(start + 1, end - start - 1).trimmed();
+            else
+                role = afterTag.split('\r').first().trimmed();
         }
 
         return response;
     }
 
-
-
-    // =========================
-    // ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
-    // =========================
+    // Только для авторизованных
     if (role.isEmpty()) {
         return "ERR: Not authenticated\r\n";
     }
@@ -69,9 +69,7 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
         return response;
     }
 
-    // =========================
-    // ТОЛЬКО ДЛЯ ADMIN
-    // =========================
+    // Только для admin
     if (action == "admin_test") {
         if (role != "admin")
             return "ERR: Access denied. Admin only.\r\n";
@@ -79,8 +77,12 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
         return "ADMIN_OK\r\n";
     }
 
-    // =========================
-    // НЕИЗВЕСТНАЯ КОМАНДА
-    // =========================
+    if (action == "sort") {
+        if (role != "admin")
+            return "ERR: Access denied. Admin only.\r\n";
+        return fn_list_users_sorted(payload);
+    }
+
+    // Неизвестная команда
     return "ERR: Unknown command '" + action + "'\r\n";
 }

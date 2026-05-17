@@ -10,9 +10,10 @@ public:
 
     bool open();                      // открыть БД
     bool userExists(const QString &login);
-    bool addUser(const QString &login, const QString &hash);
+    bool addUser(const QString &login, const QString &hash, const QString &role = "user");
     bool checkUser(const QString &login, const QString &hash);
     QString getUserRole(const QString &login);
+    QString getSortedUsers(const QString &sortBy);
 
 private:
     DatabaseManager();                // приватный конструктор
