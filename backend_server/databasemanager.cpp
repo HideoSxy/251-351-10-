@@ -51,11 +51,12 @@ bool DatabaseManager::userExists(const QString &login) {
     return false;
 }
 
-bool DatabaseManager::addUser(const QString &login, const QString &hash) {
+bool DatabaseManager::addUser(const QString &login, const QString &hash, const QString &role) {
     QSqlQuery query;
-    query.prepare("INSERT INTO users (login, hash) VALUES (:login, :hash)");
+    query.prepare("INSERT INTO users (login, hash, role) VALUES (:login, :hash, :role)");
     query.bindValue(":login", login);
     query.bindValue(":hash", hash);
+    query.bindValue(":role", role);
     if (!query.exec()) {
         qDebug() << "[DatabaseManager] addUser failed:" << query.lastError().text();
         return false;
@@ -89,4 +90,23 @@ QString DatabaseManager::getUserRole(const QString &login) {
         return query.value(0).toString();
     }
     return "user";
+}
+
+QString DatabaseManager::getSortedUsers(const QString &sortBy) {
+    QSqlQuery query;
+    // sortBy = "login" или "role"
+    QString order;
+    if (sortBy == "role")
+        order = "role, login";
+    else
+        order = "login";
+    if (!query.exec("SELECT login, role FROM users ORDER BY " + order)) {
+        qDebug() << "[DatabaseManager] getSortedUsers failed:" << query.lastError().text();
+        return "";
+    }
+    QStringList lines;
+    while (query.next()) {
+        lines << query.value(0).toString() + ":" + query.value(1).toString();
+    }
+    return lines.join(", ");
 }

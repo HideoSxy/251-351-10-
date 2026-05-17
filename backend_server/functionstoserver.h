@@ -27,12 +27,6 @@ QString fn_rsa_decrypt(const QString &payload);
 // Метод хорд. payload: "a,b,eps"
 QString fn_chord(const QString &payload);
 
-// // Стеганография
-// // Внедрить сообщение в картинку методом LSB. payload: "image_path,message"
-// QString fn_embed(const std::QString& image_path,
-//               const std::QString& output_path,
-//               const std::QString& msg);
-// // Извлечь сообщение из картинки. payload: "image_path"
-// QString fn_extract(const QString& image_path);
+QString fn_list_users_sorted(const QString &payload);
 
 #endif

@@ -60,10 +60,8 @@ void MyTcpServer::slotServerRead() {
 
         // Запись роли определенного сокета
         if (response.startsWith("AUTH_OK:")) {
-            QString role = response.mid(9).trimmed();
-            mRoles[socket] = role.split('\r').first().split('\n').first().trimmed();
             qDebug() << "[Server] Client" << socket->peerPort()
-                     << "authenticated as:" << mRoles[socket];
+            << "authenticated as:" << mRoles[socket];
         }
 
         socket->write(response.toUtf8());
