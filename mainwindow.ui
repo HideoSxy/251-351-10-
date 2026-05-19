@@ -11,20 +11,780 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>StegoApp - Стеганография</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_main">
+    <item>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+
+      <!-- СТРАНИЦА 0: ОКНО ВХОДА -->
+      <widget class="QWidget" name="pageLogin">
+       <layout class="QVBoxLayout" name="verticalLayout_login">
+        <property name="spacing">
+         <number>20</number>
+        </property>
+
+        <item>
+         <widget class="QLabel" name="labelTitle">
+          <property name="text">
+           <string>StegoApp</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>24</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+
+        <item>
+         <widget class="QGroupBox" name="groupBoxLogin">
+          <property name="title">
+           <string>Вход в систему</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_loginFields">
+           <property name="spacing">
+            <number>15</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditLogin">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>Логин</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditPassword">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>Пароль</string>
+             </property>
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+        <item>
+         <widget class="QLabel" name="labelConnectionStatus">
+          <property name="text">
+           <string>Отключено от сервера</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: #666666; font-size: 10pt;</string>
+          </property>
+         </widget>
+        </item>
+
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_buttons">
+          <item>
+           <spacer name="horizontalSpacer_left">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnRegister">
+            <property name="text">
+             <string>Регистрация</string>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color: #2196F3; color: white; border-radius: 5px; font-weight: bold; } QPushButton:hover { background-color: #1976D2; }</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnLogin">
+            <property name="text">
+             <string>Войти</string>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color: #4CAF50; color: white; border-radius: 5px; font-weight: bold; } QPushButton:hover { background-color: #45a049; }</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_right">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+
+        <item>
+         <widget class="QTextEdit" name="textEditLog">
+          <property name="maximumHeight">
+           <number>120</number>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QTextEdit { background-color: #1e1e1e; color: #d4d4d4; font-family: Consolas, monospace; font-size: 9pt; }</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- СТРАНИЦА 1: ОКНО РЕГИСТРАЦИИ -->
+      <widget class="QWidget" name="pageRegister">
+       <layout class="QVBoxLayout" name="verticalLayout_register">
+        <property name="spacing">
+         <number>20</number>
+        </property>
+
+        <item>
+         <widget class="QLabel" name="labelRegTitle">
+          <property name="text">
+           <string>Регистрация нового пользователя</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+
+        <item>
+         <widget class="QGroupBox" name="groupBoxRegister">
+          <property name="title">
+           <string>Заполните поля</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_regFields">
+           <property name="spacing">
+            <number>15</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditRegLogin">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>Логин</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditRegPassword">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>Пароль</string>
+             </property>
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditRegConfirm">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="placeholderText">
+              <string>Подтверждение пароля</string>
+             </property>
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_regButtons">
+          <item>
+           <spacer name="horizontalSpacer_regLeft">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnBackToLogin">
+            <property name="text">
+             <string>Назад</string>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnSubmitRegister">
+            <property name="text">
+             <string>Зарегистрироваться</string>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>160</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color: #4CAF50; color: white; border-radius: 5px; font-weight: bold; } QPushButton:hover { background-color: #45a049; }</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_regRight">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+
+        <item>
+         <widget class="QTextEdit" name="textEditRegLog">
+          <property name="maximumHeight">
+           <number>120</number>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QTextEdit { background-color: #1e1e1e; color: #d4d4d4; font-family: Consolas, monospace; font-size: 9pt; }</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- СТРАНИЦА 2: ГЛАВНОЕ ОКНО СТЕГАНОГРАФИИ -->
+      <widget class="QWidget" name="pageStegano">
+       <layout class="QVBoxLayout" name="verticalLayout_stegano">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_userInfo">
+          <item>
+           <widget class="QLabel" name="labelUserInfo">
+            <property name="text">
+             <string>Пользователь:</string>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelCurrentUser">
+            <property name="text">
+             <string>не авторизован</string>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: #2196F3;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_user">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnLogout">
+            <property name="text">
+             <string>Выйти</string>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color: #f44336; color: white; border-radius: 3px; } QPushButton:hover { background-color: #d32f2f; }</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+
+        <item>
+         <widget class="QTabWidget" name="tabWidgetFunctions">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+
+          <widget class="QWidget" name="tabSha384">
+           <attribute name="title">
+            <string>SHA-384</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_sha">
+            <item>
+             <widget class="QLabel" name="labelShaInput">
+              <property name="text">
+               <string>Введите текст для хэширования:</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextEdit" name="textEditShaInput">
+              <property name="minimumHeight">
+               <number>80</number>
+              </property>
+              <property name="maximumHeight">
+               <number>120</number>
+              </property>
+              <property name="placeholderText">
+               <string>Введите текст здесь...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnSha384">
+              <property name="text">
+               <string>Вычислить SHA-384</string>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelShaOutput">
+              <property name="text">
+               <string>Результат:</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextEdit" name="textEditShaOutput">
+              <property name="minimumHeight">
+               <number>60</number>
+              </property>
+              <property name="maximumHeight">
+               <number>80</number>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font-family: monospace;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+          <widget class="QWidget" name="tabStegano">
+           <attribute name="title">
+            <string>Стеганография (PNG)</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_stego">
+            <item>
+             <widget class="QGroupBox" name="groupBoxEmbed">
+              <property name="title">
+               <string>Встраивание сообщения</string>
+              </property>
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_embed">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_embed1">
+                 <item>
+                  <widget class="QLabel" name="labelImageIn">
+                   <property name="text">
+                    <string>Исходное PNG:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEditImageIn"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnBrowseIn">
+                   <property name="text">
+                    <string>Обзор...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_embed2">
+                 <item>
+                  <widget class="QLabel" name="labelImageOut">
+                   <property name="text">
+                    <string>Выходное PNG:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEditImageOut"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnBrowseOut">
+                   <property name="text">
+                    <string>Обзор...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelMessage">
+                 <property name="text">
+                  <string>Сообщение для встраивания:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="textEditMessage">
+                 <property name="maximumHeight">
+                  <number>80</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Введите секретное сообщение...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnEmbed">
+                 <property name="text">
+                  <string>Встроить сообщение</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+
+            <item>
+             <widget class="QGroupBox" name="groupBoxExtract">
+              <property name="title">
+               <string>Извлечение сообщения</string>
+              </property>
+              <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_extract">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_extract1">
+                 <item>
+                  <widget class="QLabel" name="labelExtractImage">
+                   <property name="text">
+                    <string>PNG с сообщением:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="lineEditExtractImage"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnBrowseExtract">
+                   <property name="text">
+                    <string>Обзор...</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnExtract">
+                 <property name="text">
+                  <string>Извлечь сообщение</string>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelExtracted">
+                 <property name="text">
+                  <string>Извлечённое сообщение:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="textEditExtracted">
+                 <property name="minimumHeight">
+                  <number>60</number>
+                 </property>
+                 <property name="maximumHeight">
+                  <number>80</number>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+          <widget class="QWidget" name="tabAdmin">
+           <attribute name="title">
+            <string>Админ-панель</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_admin">
+            <item>
+             <widget class="QLabel" name="labelAdminInfo">
+              <property name="text">
+               <string>Доступно только для администраторов</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: #f44336; font-weight: bold;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_admin1">
+              <item>
+               <widget class="QLabel" name="labelSortBy">
+                <property name="text">
+                 <string>Сортировать по:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboSortBy">
+                <item>
+                 <property name="text">
+                  <string>login</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>role</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnListUsers">
+                <property name="text">
+                 <string>Показать пользователей</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTextEdit" name="textEditUsersList">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">font-family: monospace;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+
+        <item>
+         <widget class="QGroupBox" name="groupBoxOutput">
+          <property name="title">
+           <string>Вывод сервера</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_output">
+           <item>
+            <widget class="QTextEdit" name="textEditOutput">
+             <property name="minimumHeight">
+              <number>100</number>
+             </property>
+             <property name="maximumHeight">
+              <number>150</number>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">font-family: monospace; background-color: #1e1e1e; color: #d4d4d4;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
