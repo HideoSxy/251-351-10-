@@ -3,6 +3,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
+#include <QFileInfo>
+#include "backend_server/func/stego.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -49,6 +51,7 @@ void MainWindow::sendCommand(const QString &command)
     if (!cmd.endsWith('\n')) {
         cmd += '\n';
     }
+    qDebug() << "[sendCommand] Sending:" << cmd;
     socket->write(cmd.toUtf8());
     socket->flush();
 }
@@ -138,7 +141,7 @@ void MainWindow::onReadyRead()
 
         QString response = QString::fromUtf8(line).trimmed();
 
-        qDebug() << "Response received:" << response;
+        qDebug() << "[onReadyRead] Response:" << response;
 
         // Обработка ответов сервера
         if (response.startsWith("CONNECTED:")) {
@@ -304,6 +307,17 @@ void MainWindow::on_btnEmbed_clicked()
     QString imageOut = ui->lineEditImageOut->text().trimmed();
     QString message = ui->textEditMessage->toPlainText().trimmed();
 
+    qDebug() << "[Embed] Image in:" << imageIn;
+    qDebug() << "[Embed] Image out:" << imageOut;
+    qDebug() << "[Embed] Message:" << message;
+
+    // Проверяем существование входного файла
+    QFileInfo checkFile(imageIn);
+    if (!checkFile.exists()) {
+        QMessageBox::warning(this, "Ошибка", "Входной файл не существует: " + imageIn);
+        return;
+    }
+
     if (imageIn.isEmpty() || imageOut.isEmpty() || message.isEmpty()) {
         QMessageBox::warning(this, "Ошибка", "Заполните все поля");
         return;
@@ -323,13 +337,33 @@ void MainWindow::on_btnExtract_clicked()
     }
 
     QString imagePath = ui->lineEditExtractImage->text().trimmed();
+
+    qDebug() << "[Extract] Image path:" << imagePath;
+
     if (imagePath.isEmpty()) {
         QMessageBox::warning(this, "Ошибка", "Выберите PNG файл");
         return;
     }
 
-    sendCommand(QString("extract&%1").arg(imagePath));
-    appendToOutput("Отправлен запрос на извлечение сообщения...");
+    // Проверяем существование файла
+    QFileInfo checkFile(imagePath);
+    if (!checkFile.exists()) {
+        QMessageBox::warning(this, "Ошибка", "Файл не существует: " + imagePath);
+        return;
+    }
+
+
+
+    QString message = fn_extract(imagePath);  // Вызываем функцию из stego.cpp
+
+    if (message.isEmpty()) {
+        QMessageBox::warning(this, "Ошибка", "Не удалось извлечь сообщение или сообщение не найдено");
+        appendToOutput("Ошибка извлечения: сообщение не найдено");
+    } else {
+        ui->textEditExtracted->setText(message);
+        appendToOutput("Извлечено сообщение: " + message);
+        QMessageBox::information(this, "Стеганография", "Сообщение успешно извлечено!");
+    }
 }
 
 void MainWindow::on_btnListUsers_clicked()
@@ -365,6 +399,7 @@ void MainWindow::on_btnBrowseIn_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Выберите PNG файл", "", "PNG Images (*.png)");
     if (!fileName.isEmpty()) {
         ui->lineEditImageIn->setText(fileName);
+        qDebug() << "[BrowseIn] Selected file:" << fileName;
     }
 }
 
@@ -373,6 +408,7 @@ void MainWindow::on_btnBrowseOut_clicked()
     QString fileName = QFileDialog::getSaveFileName(this, "Сохранить PNG как", "", "PNG Images (*.png)");
     if (!fileName.isEmpty()) {
         ui->lineEditImageOut->setText(fileName);
+        qDebug() << "[BrowseOut] Selected file:" << fileName;
     }
 }
 
@@ -381,5 +417,6 @@ void MainWindow::on_btnBrowseExtract_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Выберите PNG файл с сообщением", "", "PNG Images (*.png)");
     if (!fileName.isEmpty()) {
         ui->lineEditExtractImage->setText(fileName);
+        qDebug() << "[BrowseExtract] Selected file:" << fileName;
     }
 }
