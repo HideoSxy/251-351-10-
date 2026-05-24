@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTcpSocket>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,12 +18,6 @@ public:
     ~MainWindow();
 
 private slots:
-    // Сокет
-    void onConnected();
-    void onDisconnected();
-    void onError(QAbstractSocket::SocketError socketError);
-    void onReadyRead();
-
     // Кнопки окна входа
     void on_btnLogin_clicked();
     void on_btnRegister_clicked();
@@ -43,16 +36,18 @@ private slots:
     void on_btnBrowseOut_clicked();
     void on_btnBrowseExtract_clicked();
 
+    // Слоты для сигналов NetworkClient
+    void onClientConnected();
+    void onClientDisconnected();
+    void onClientError(const QString &errorString);
+    void onClientMessage(const QString &response);
+
 private:
     Ui::MainWindow *ui;
-    QTcpSocket *socket;
-    QByteArray buffer;
     QString currentUser;
     QString currentRole;
     bool isAuthenticated;
 
-    void connectToServer();
-    void sendCommand(const QString &command);
     void appendToLog(const QString &text);
     void appendToRegLog(const QString &text);
     void appendToOutput(const QString &text);
@@ -62,4 +57,4 @@ private:
     void updateUserInfo();
 };
 
-#endif
+#endif // MAINWINDOW_H

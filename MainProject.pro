@@ -29,6 +29,7 @@ SOURCES += \
     backend_server/func/stego.cpp \
     backend_server/functionstoserver.cpp \
     backend_server/mytcpserver.cpp \
+    backend_server/network_client.cpp \
     backend_server/requesthandler.cpp \
     main.cpp \
     mainwindow.cpp
@@ -39,6 +40,7 @@ HEADERS += \
     backend_server/func/stego.h \
     backend_server/functionstoserver.h \
     backend_server/mytcpserver.h \
+    backend_server/network_client.h \
     backend_server/requesthandler.h \
     mainwindow.h
 
