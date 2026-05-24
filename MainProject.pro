@@ -18,6 +18,7 @@ CONFIG += c++17
 
 SOURCES += \
     backend_server/databasemanager.cpp \
+    backend_server/func/chord.cpp \
     backend_server/func/sha384.cpp \
     backend_server/func/stego.cpp \
     backend_server/functionstoserver.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
 
 HEADERS += \
     backend_server/databasemanager.h \
+    backend_server/func/chord.h \
     backend_server/func/sha384.h \
     backend_server/func/stego.h \
     backend_server/functionstoserver.h \

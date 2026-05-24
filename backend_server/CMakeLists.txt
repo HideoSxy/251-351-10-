@@ -19,6 +19,7 @@ add_executable(main_server
     databasemanager.h       databasemanager.cpp
     func/sha384.h           func/sha384.cpp
     func/stego.h            func/stego.cpp
+    func/chord.h            func/chord.cpp
 )
 
 target_link_libraries(main_server
