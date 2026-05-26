@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTableWidget>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -56,6 +58,14 @@ private:
     void showRegisterPage();
     void showMainPage();
     void updateUserInfo();
+    // Таблица истории операций
+    QTableWidget *m_historyTable;
+
+    // Метод для добавления записи в историю
+    void addToHistory(const QString &action, const QString &result);
+
+    // Метод для получения текущего времени
+    QString getCurrentTimestamp();
 };
 
 #endif // MAINWINDOW_H

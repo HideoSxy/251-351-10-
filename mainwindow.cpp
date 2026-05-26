@@ -5,6 +5,9 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QFileInfo>
+#include <QTableWidgetItem>
+#include <QHeaderView>
+#include <QDateTime>
 #include "backend_server/func/stego.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,6 +16,13 @@ MainWindow::MainWindow(QWidget *parent)
     , isAuthenticated(false)
 {
     ui->setupUi(this);
+
+    // Используем таблицу из UI файла
+    m_historyTable = ui->tableHistory;
+
+    // Скрываем админские вкладки для не-администраторов
+    ui->tabWidgetFunctions->setTabVisible(ui->tabWidgetFunctions->indexOf(ui->tabAdmin), false);
+    ui->tabWidgetFunctions->setTabVisible(ui->tabWidgetFunctions->indexOf(ui->tabHistory), false);
 
     showLoginPage();
 
@@ -76,8 +86,14 @@ void MainWindow::updateUserInfo()
     ui->labelCurrentUser->setText(QString("%1 (%2)").arg(currentUser, currentRole));
 
     if (currentRole == "admin") {
+        // Показываем и включаем админские вкладки
+        ui->tabWidgetFunctions->setTabVisible(ui->tabWidgetFunctions->indexOf(ui->tabAdmin), true);
+        ui->tabWidgetFunctions->setTabVisible(ui->tabWidgetFunctions->indexOf(ui->tabHistory), true);
         ui->tabAdmin->setEnabled(true);
     } else {
+        // Скрываем админские вкладки для обычных пользователей
+        ui->tabWidgetFunctions->setTabVisible(ui->tabWidgetFunctions->indexOf(ui->tabAdmin), false);
+        ui->tabWidgetFunctions->setTabVisible(ui->tabWidgetFunctions->indexOf(ui->tabHistory), false);
         ui->tabAdmin->setEnabled(false);
     }
 }
@@ -89,6 +105,7 @@ void MainWindow::onClientConnected()
     appendToLog("Подключено к серверу!");
     ui->labelConnectionStatus->setText("Подключено к серверу");
     ui->labelConnectionStatus->setStyleSheet("color: green; font-size: 10pt;");
+    addToHistory("Подключение к серверу", "Успешно");
 }
 
 void MainWindow::onClientDisconnected()
@@ -98,11 +115,13 @@ void MainWindow::onClientDisconnected()
     ui->labelConnectionStatus->setText("Отключено от сервера");
     ui->labelConnectionStatus->setStyleSheet("color: #666666; font-size: 10pt;");
     showLoginPage();
+    addToHistory("Отключение от сервера", "Соединение разорвано");
 }
 
 void MainWindow::onClientError(const QString &errorString)
 {
     appendToLog("Ошибка: " + errorString);
+    addToHistory("Ошибка", errorString);
 }
 
 void MainWindow::onClientMessage(const QString &response)
@@ -113,11 +132,13 @@ void MainWindow::onClientMessage(const QString &response)
     }
     else if (response.startsWith("REGISTER_OK:")) {
         appendToRegLog(response);
+        addToHistory("Регистрация", response.mid(12).trimmed());
         QMessageBox::information(this, "Регистрация", "Регистрация прошла успешно! Теперь вы можете войти.");
         showLoginPage();
     }
     else if (response.startsWith("REGISTER_ERR:")) {
         appendToRegLog(response);
+        addToHistory("Ошибка регистрации", response.mid(13).trimmed());
         QMessageBox::warning(this, "Ошибка регистрации", response);
     }
     else if (response.startsWith("AUTH_OK:")) {
@@ -137,39 +158,48 @@ void MainWindow::onClientMessage(const QString &response)
             currentRole = authResponse.mid(roleStart + 1, roleEnd - roleStart - 1);
         }
 
+        addToHistory("Авторизация", currentUser + " (" + currentRole + ")");
+
         appendToLog(response);
         appendToOutput("Авторизация успешна. Роль: " + currentRole);
         showMainPage();
     }
     else if (response.startsWith("AUTH_ERR:")) {
         appendToLog(response);
+        addToHistory("Ошибка авторизации", response.mid(9).trimmed());
         QMessageBox::warning(this, "Ошибка авторизации", response);
     }
     else if (response.startsWith("SHA384_OK:")) {
         QString hash = response.mid(10).trimmed();
         ui->textEditShaOutput->setText(hash);
         appendToOutput(response);
+        addToHistory("SHA-384", "Хэш: " + hash.left(30) + "...");
     }
     else if (response.startsWith("SHA384_ERR:")) {
         appendToOutput(response);
+        addToHistory("Ошибка SHA-384", response.mid(12).trimmed());
         QMessageBox::warning(this, "Ошибка SHA-384", response);
     }
     else if (response.startsWith("EMBED_OK:")) {
         appendToOutput(response);
+        addToHistory("Встраивание", "Сообщение успешно встроено в изображение");
         QMessageBox::information(this, "Стеганография", "Сообщение успешно встроено в изображение!");
     }
     else if (response.startsWith("EMBED_ERR:")) {
         appendToOutput(response);
+        addToHistory("Ошибка встраивания", response.mid(11).trimmed());
         QMessageBox::warning(this, "Ошибка встраивания", response);
     }
     else if (response.startsWith("EXTRACT_OK:")) {
         QString message = response.mid(11).trimmed();
         ui->textEditExtracted->setText(message);
         appendToOutput("Извлечено сообщение: " + message);
+        addToHistory("Извлечение", "Сообщение: " + message);
         QMessageBox::information(this, "Стеганография", "Сообщение успешно извлечено!");
     }
     else if (response.startsWith("EXTRACT_ERR:")) {
         appendToOutput(response);
+        addToHistory("Ошибка извлечения", response.mid(12).trimmed());
         QMessageBox::warning(this, "Ошибка извлечения", response);
     }
     else if (response.startsWith("SORT_OK:")) {
@@ -177,13 +207,16 @@ void MainWindow::onClientMessage(const QString &response)
         QStringList userList = users.split(", ");
         ui->textEditUsersList->setText(userList.join("\n"));
         appendToOutput(response);
+        addToHistory("Список пользователей", "Загружено " + QString::number(userList.size()) + " записей");
     }
     else if (response.startsWith("SORT_ERR:")) {
         appendToOutput(response);
+        addToHistory("Ошибка", response.mid(8).trimmed());
         QMessageBox::warning(this, "Ошибка", response);
     }
     else if (response.startsWith("ERR:")) {
         appendToOutput(response);
+        addToHistory("Ошибка", response.mid(4).trimmed());
     }
     else {
         appendToOutput(response);
@@ -255,6 +288,7 @@ void MainWindow::on_btnSha384_clicked()
         return;
     }
 
+    addToHistory("SHA-384 запрос", "Текст: " + text.left(30) + "...");
     NetworkClient::instance().sendCommand(QString("sha384&%1").arg(text));
 }
 
@@ -285,6 +319,7 @@ void MainWindow::on_btnEmbed_clicked()
         return;
     }
 
+    addToHistory("Встраивание запрос", "Файл: " + imageIn + ", Сообщение: " + message.left(30) + "...");
     NetworkClient::instance().sendCommand(QString("embed&%1,%2,%3").arg(imageIn, imageOut, message));
     appendToOutput("Отправлен запрос на встраивание сообщения...");
 }
@@ -312,6 +347,8 @@ void MainWindow::on_btnExtract_clicked()
         return;
     }
 
+    addToHistory("Извлечение запрос", "Файл: " + imagePath);
+
     QString message = fn_extract(imagePath);
 
     if (message.isEmpty()) {
@@ -320,6 +357,7 @@ void MainWindow::on_btnExtract_clicked()
     } else {
         ui->textEditExtracted->setText(message);
         appendToOutput("Извлечено сообщение: " + message);
+        addToHistory("Извлечение", "Сообщение: " + message);
         QMessageBox::information(this, "Стеганография", "Сообщение успешно извлечено!");
     }
 }
@@ -338,6 +376,7 @@ void MainWindow::on_btnListUsers_clicked()
     }
 
     QString sortBy = ui->comboSortBy->currentText();
+    addToHistory("Запрос списка пользователей", "Сортировка: " + sortBy);
     NetworkClient::instance().sendCommand(QString("sort&%1").arg(sortBy));
 }
 
@@ -348,6 +387,7 @@ void MainWindow::on_btnLogout_clicked()
     currentRole.clear();
     showLoginPage();
     appendToOutput("Вы вышли из системы");
+    addToHistory("Выход", "Сессия завершена");
 }
 
 // ==================== ОБЗОР ФАЙЛОВ ====================
@@ -377,4 +417,26 @@ void MainWindow::on_btnBrowseExtract_clicked()
         ui->lineEditExtractImage->setText(fileName);
         qDebug() << "[BrowseExtract] Selected file:" << fileName;
     }
+}
+
+// ==================== МЕТОДЫ ДЛЯ ТАБЛИЦЫ ИСТОРИИ ====================
+
+QString MainWindow::getCurrentTimestamp()
+{
+    QDateTime now = QDateTime::currentDateTime();
+    return now.toString("yyyy-MM-dd HH:mm:ss");
+}
+
+void MainWindow::addToHistory(const QString &action, const QString &result)
+{
+    if (!m_historyTable) return;
+
+    int row = m_historyTable->rowCount();
+    m_historyTable->insertRow(row);
+
+    m_historyTable->setItem(row, 0, new QTableWidgetItem(getCurrentTimestamp()));
+    m_historyTable->setItem(row, 1, new QTableWidgetItem(action));
+    m_historyTable->setItem(row, 2, new QTableWidgetItem(result));
+
+    m_historyTable->scrollToBottom();
 }
