@@ -202,7 +202,7 @@ void MainWindow::on_btnLogin_clicked()
         return;
     }
 
-    NetworkClient::instance().sendCommand(QString("auth&%1,%2").arg(login, password));
+    NetworkClient::instance().sendEncryptedAuth(login, password);
 }
 
 void MainWindow::on_btnRegister_clicked()
@@ -236,7 +236,7 @@ void MainWindow::on_btnSubmitRegister_clicked()
         return;
     }
 
-    NetworkClient::instance().sendCommand(QString("reg&%1,%2").arg(login, password));
+    NetworkClient::instance().sendEncryptedRegister(login, password);
 }
 
 // ==================== КНОПКИ ГЛАВНОГО ОКНА ====================

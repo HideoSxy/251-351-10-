@@ -17,7 +17,7 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     QString action = parts[0].toLower().trimmed();
     QString payload = (parts.size() > 1) ? parts[1].trimmed() : "";
 
-    // Доступно всем
+    // Доступно всем (без авторизации)
     if (action == "reg") {
         return fn_register(payload);
     }
@@ -45,11 +45,7 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     }
 
     if (action == "sha384") return fn_sha384(payload);
-    if (action == "rsa_gen") return fn_rsa_gen();
-    if (action == "rsa_enc") return fn_rsa_encrypt(payload);
-    if (action == "rsa_dec") return fn_rsa_decrypt(payload);
     if (action == "chord") return fn_chord(payload);
-
 
     if (action == "embed") {
         QStringList args = payload.split(",");

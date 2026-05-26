@@ -12,7 +12,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network Sql Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network Sql Widgets)
 find_package(PNG REQUIRED)
 
-# Путь к заголовкам (если нужно)
+# Путь к заголовкам
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
@@ -24,6 +24,7 @@ set(SERVER_SOURCES
     databasemanager.cpp
     func/sha384.cpp
     func/stego.cpp
+    func/rsa_wrapper.cpp   
 )
 
 set(SERVER_HEADERS
@@ -33,16 +34,19 @@ set(SERVER_HEADERS
     databasemanager.h
     func/sha384.h
     func/stego.h
+    func/rsa_wrapper.h
 )
 
 # Файлы GUI клиента (на уровень выше)
 set(GUI_SOURCES
     ../main.cpp
     ../mainwindow.cpp
+    network_client.cpp
 )
 
 set(GUI_HEADERS
     ../mainwindow.h
+    network_client.h
 )
 
 set(GUI_FORMS

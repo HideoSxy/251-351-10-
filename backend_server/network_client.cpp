@@ -1,5 +1,8 @@
 #include "network_client.h"
+#include "func/rsa_wrapper.h"
 #include <QDebug>
+
+static RSAWrapper s_clientRsa;
 
 NetworkClient::NetworkClient(QObject *parent)
     : QObject(parent)
@@ -9,6 +12,10 @@ NetworkClient::NetworkClient(QObject *parent)
     connect(m_socket, &QTcpSocket::disconnected, this, &NetworkClient::onDisconnected);
     connect(m_socket, &QTcpSocket::errorOccurred, this, &NetworkClient::onError);
     connect(m_socket, &QTcpSocket::readyRead, this, &NetworkClient::onReadyRead);
+
+    // Инициализируем RSA
+    s_clientRsa.loadFixedKeys();
+    qDebug() << "[NetworkClient] RSA initialized";
 }
 
 NetworkClient::~NetworkClient()
@@ -96,4 +103,22 @@ void NetworkClient::onReadyRead()
 
         emit messageReceived(response);
     }
+}
+
+// ========== ЗАШИФРОВАННЫЕ МЕТОДЫ ДЛЯ АВТОРИЗАЦИИ И РЕГИСТРАЦИИ ==========
+
+void NetworkClient::sendEncryptedAuth(const QString &login, const QString &password)
+{
+    QString encryptedPassword = s_clientRsa.encrypt(password);
+//    qDebug() << "[NetworkClient] Original password:" << password;
+//    qDebug() << "[NetworkClient] Encrypted password:" << encryptedPassword;
+    sendCommand(QString("auth&%1,%2").arg(login, encryptedPassword));
+}
+
+void NetworkClient::sendEncryptedRegister(const QString &login, const QString &password)
+{
+    QString encryptedPassword = s_clientRsa.encrypt(password);
+//    qDebug() << "[NetworkClient] Original password:" << password;
+//    qDebug() << "[NetworkClient] Encrypted password:" << encryptedPassword;
+    sendCommand(QString("reg&%1,%2").arg(login, encryptedPassword));
 }

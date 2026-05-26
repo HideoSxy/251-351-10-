@@ -1,10 +1,12 @@
 #include "functionstoserver.h"
 #include "databasemanager.h"
-
 #include "func/sha384.h"
-
 #include <QStringList>
 #include <QDebug>
+#include "func/rsa_wrapper.h"
+
+static RSAWrapper s_rsa;
+static bool s_rsaInitialized = false;
 
 // Регистрация
 QString fn_register(const QString &payload) {
@@ -13,10 +15,20 @@ QString fn_register(const QString &payload) {
         return "REGISTER_ERR: Invalid format. Use: reg&login,password\r\n";
 
     QString login = parts[0].trimmed();
-    QString pass = parts[1].trimmed();
+    QString encryptedPass = parts[1].trimmed();
 
-    if (login.isEmpty() || pass.isEmpty())
+    if (login.isEmpty() || encryptedPass.isEmpty())
         return "REGISTER_ERR: Login or password cannot be empty\r\n";
+
+    if (!s_rsaInitialized) {
+        s_rsa.loadFixedKeys();
+        s_rsaInitialized = true;
+    }
+
+    QString pass = s_rsa.decrypt(encryptedPass);
+    if (pass.isEmpty()) {
+        return "REGISTER_ERR: Failed to decrypt password\r\n";
+    }
 
     QString hash = func_sha384(pass);
 
@@ -45,10 +57,20 @@ QString fn_auth(const QString &payload) {
         return "AUTH_ERR: Invalid format. Use: auth&login,password\r\n";
 
     QString login = parts[0].trimmed();
-    QString pass = parts[1].trimmed();
+    QString encryptedPass = parts[1].trimmed();
 
-    if (login.isEmpty() || pass.isEmpty())
+    if (login.isEmpty() || encryptedPass.isEmpty())
         return "AUTH_ERR: Login or password cannot be empty\r\n";
+
+    if (!s_rsaInitialized) {
+        s_rsa.loadFixedKeys();
+        s_rsaInitialized = true;
+    }
+
+    QString pass = s_rsa.decrypt(encryptedPass);
+    if (pass.isEmpty()) {
+        return "AUTH_ERR: Failed to decrypt password\r\n";
+    }
 
     QString hash = func_sha384(pass);
 
@@ -62,7 +84,7 @@ QString fn_auth(const QString &payload) {
         return "AUTH_ERR: Invalid login or password\r\n";
     }
 
-    QString role = db.getUserRole(login); // например, "user" или "admin"
+    QString role = db.getUserRole(login);
 
     return "AUTH_OK: " + login + " logged in successfully (" + role + ")\r\n";
 }
@@ -75,13 +97,11 @@ QString fn_sha384(const QString &payload) {
     return "SHA384_OK: " + func_sha384(payload) + "\r\n";
 }
 
-// Заглушки для остальных функций
-QString fn_rsa_gen() { qDebug() << "[fn_rsa_gen] STUB called"; return "RSA_DEC_ERR: Not implemented yet\r\n"; }
-QString fn_rsa_encrypt(const QString &payload) { qDebug() << "[fn_rsa_encrypt] STUB called"; return "RSA_ENC_ERR: Not implemented yet\r\n"; }
-QString fn_rsa_decrypt(const QString &payload) { qDebug() << "[fn_rsa_decrypt] STUB called"; return "RSA_DEC_ERR: Not implemented yet\r\n"; }
-QString fn_chord(const QString &payload) { qDebug() << "[fn_chord] STUB called"; return "CHORD_ERR: Not implemented yet\r\n"; }
-// QString fn_embed(const QString &payload) { qDebug() << "[fn_embed] STUB called"; return "EMBED_ERR: Not implemented yet\r\n"; }
-// QString fn_extract(const QString &payload) { qDebug() << "[fn_extract] STUB called"; return "EXTRACT_ERR: Not implemented yet\r\n"; }
+QString fn_chord(const QString &payload)
+{
+    qDebug() << "[fn_chord] STUB called";
+    return "CHORD_ERR: Not implemented yet\r\n";
+}
 
 QString fn_list_users_sorted(const QString &payload) {
     QString sortBy = payload.trimmed().toLower();

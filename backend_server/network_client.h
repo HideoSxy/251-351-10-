@@ -23,6 +23,10 @@ public:
     bool isConnected() const;
     void disconnect();
 
+    // Зашифрованные методы для авторизации и регистрации
+    void sendEncryptedAuth(const QString &login, const QString &password);
+    void sendEncryptedRegister(const QString &login, const QString &password);
+
 signals:
     // Сигналы для оповещения GUI
     void connected();

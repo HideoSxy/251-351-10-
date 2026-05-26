@@ -25,6 +25,7 @@ macx: {
 
 SOURCES += \
     backend_server/databasemanager.cpp \
+    backend_server/func/rsa_wrapper.cpp \
     backend_server/func/sha384.cpp \
     backend_server/func/stego.cpp \
     backend_server/functionstoserver.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
     backend_server/databasemanager.h \
+    backend_server/func/rsa_wrapper.h \
     backend_server/func/sha384.h \
     backend_server/func/stego.h \
     backend_server/functionstoserver.h \

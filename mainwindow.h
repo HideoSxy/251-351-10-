@@ -46,6 +46,7 @@ private:
     Ui::MainWindow *ui;
     QString currentUser;
     QString currentRole;
+    QString m_lastEncrypted;
     bool isAuthenticated;
 
     void appendToLog(const QString &text);
