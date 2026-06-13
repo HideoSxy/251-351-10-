@@ -127,6 +127,61 @@ main_server.exe
 
 ---
 
+## Unit-тесты
+
+Тесты собираются отдельной целью `unit_tests` (Qt Test). Исходники: `backend_server/tests/tests_simple.cpp`.
+
+Проверяются: SHA-384, метод хорд, genetic path, logout.
+
+### Linux / Mac
+
+Из папки `backend_server` (если `build/` уже есть — шаги 1–2 можно пропустить):
+
+```bash
+cd backend_server
+mkdir -p build
+cd build
+cmake ..
+cmake --build . --target unit_tests
+./unit_tests
+```
+
+Или через `make`:
+
+```bash
+make unit_tests
+./unit_tests
+```
+
+Через CTest:
+
+```bash
+ctest --output-on-failure
+```
+
+**macOS (Homebrew Qt):** если CMake не находит Qt, укажите путь:
+
+```bash
+cmake .. -DCMAKE_PREFIX_PATH="/opt/homebrew/opt/qt@5/lib/cmake"
+```
+
+### Windows (MinGW)
+
+```bat
+cd backend_server\build
+cmake .. -G "MinGW Makefiles"
+mingw32-make unit_tests
+unit_tests.exe
+```
+
+### Зависимости
+
+Нужен модуль **Qt Test** (`Qt5::Test` / `Qt6::Test`):
+
+- **Linux:** `qtbase5-dev` (см. раздел установки выше)
+- **Windows / macOS:** при установке Qt выберите компонент **Qt Test**
+
+---
 
 ## Структура проекта
 
@@ -138,6 +193,7 @@ backend_server/
 ├── requesthandler.h/.cpp   ← парсинг команд, маршрутизация
 ├── functionstoserver.h/.cpp ← бизнес-логика (reg, auth, sha384, заглушки)
 ├── databasemanager.h/.cpp  ← SQLite singleton (создаёт stego_app.db)
+├── tests/tests_simple.cpp  ← unit-тесты (Qt Test)
 └── func/                   ← алгоритмы (sha384, chord, genetic_path, stego)
 
 docs/
