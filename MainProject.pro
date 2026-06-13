@@ -46,9 +46,9 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
 DISTFILES += \
     .gitignore \
     backend_server/.gitignore \
     backend_server/CMakeLists.txt \
     backend_server/Dockerfile
+

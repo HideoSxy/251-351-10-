@@ -78,3 +78,7 @@ CMakeLists.txt.user*
 .rcc/
 .uic/
 /build*/
+docs/doxygen-html/
+compile_commands.json
+backend_server/compile_commands.json
+client_build/

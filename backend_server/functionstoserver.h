@@ -27,6 +27,15 @@ QString fn_rsa_decrypt(const QString &payload);
 // Метод хорд. payload: "a,b,eps"
 QString fn_chord(const QString &payload);
 
+// Кратчайший путь (ГА). payload: "start,end,from:to:weight,..."
+QString fn_genetic_path(const QString &payload);
+
 QString fn_list_users_sorted(const QString &payload);
+
+// Удаление пользователя. payload: login
+QString fn_delete_user(const QString &payload);
+
+// Выход: сброс роли на сокете
+QString fn_logout(QString &role);
 
 #endif

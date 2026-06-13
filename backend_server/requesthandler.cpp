@@ -39,6 +39,10 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
         return response;
     }
 
+    if (action == "logout") {
+        return fn_logout(role);
+    }
+
     // Только для авторизованных
     if (role.isEmpty()) {
         return "ERR: Not authenticated\r\n";
@@ -49,6 +53,7 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
     if (action == "rsa_enc") return fn_rsa_encrypt(payload);
     if (action == "rsa_dec") return fn_rsa_decrypt(payload);
     if (action == "chord") return fn_chord(payload);
+    if (action == "genetic_path") return fn_genetic_path(payload);
 
 
     if (action == "embed") {
@@ -81,6 +86,12 @@ QString RequestHandler::handle(const QString &rawCommand, QString &role)
         if (role != "admin")
             return "ERR: Access denied. Admin only.\r\n";
         return fn_list_users_sorted(payload);
+    }
+
+    if (action == "del") {
+        if (role != "admin")
+            return "ERR: Access denied. Admin only.\r\n";
+        return fn_delete_user(payload);
     }
 
     // Неизвестная команда

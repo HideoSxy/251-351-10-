@@ -3,6 +3,7 @@
 
 #include "func/sha384.h"
 #include "func/chord.h"
+#include "func/genetic_path.h"
 
 #include <QStringList>
 #include <QDebug>
@@ -83,12 +84,22 @@ QString fn_chord(const QString &payload) {
     return "CHORD_OK: " + func_chord(payload) + "\r\n";
 }
 
+// Кратчайший путь генетическим алгоритмом
+QString fn_genetic_path(const QString &payload) {
+    if (payload.trimmed().isEmpty())
+        return "GENETIC_PATH_ERR: No input parameters\r\n";
+
+    const QString result = func_genetic_path(payload);
+    if (result.startsWith("ERR:"))
+        return "GENETIC_PATH_ERR: " + result.mid(4).trimmed() + "\r\n";
+
+    return "GENETIC_PATH_OK: " + result + "\r\n";
+}
+
 // Заглушки для остальных функций
 QString fn_rsa_gen() { qDebug() << "[fn_rsa_gen] STUB called"; return "RSA_DEC_ERR: Not implemented yet\r\n"; }
 QString fn_rsa_encrypt(const QString &payload) { qDebug() << "[fn_rsa_encrypt] STUB called"; return "RSA_ENC_ERR: Not implemented yet\r\n"; }
 QString fn_rsa_decrypt(const QString &payload) { qDebug() << "[fn_rsa_decrypt] STUB called"; return "RSA_DEC_ERR: Not implemented yet\r\n"; }
-// QString fn_embed(const QString &payload) { qDebug() << "[fn_embed] STUB called"; return "EMBED_ERR: Not implemented yet\r\n"; }
-// QString fn_extract(const QString &payload) { qDebug() << "[fn_extract] STUB called"; return "EXTRACT_ERR: Not implemented yet\r\n"; }
 
 QString fn_list_users_sorted(const QString &payload) {
     QString sortBy = payload.trimmed().toLower();
@@ -98,4 +109,29 @@ QString fn_list_users_sorted(const QString &payload) {
     if (result.isEmpty())
         return "SORT_ERR: No users found or database error\r\n";
     return "SORT_OK: " + result + "\r\n";
+}
+
+QString fn_delete_user(const QString &payload) {
+    QString login = payload.trimmed();
+    if (login.isEmpty())
+        return "DELETE_ERR: Login cannot be empty. Use: del&login\r\n";
+
+    DatabaseManager &db = DatabaseManager::instance();
+    if (!db.open())
+        return "DELETE_ERR: Cannot open database\r\n";
+
+    if (!db.userExists(login))
+        return "DELETE_ERR: User not found\r\n";
+
+    if (!db.removeUser(login))
+        return "DELETE_ERR: Failed to delete user\r\n";
+
+    return "DELETE_OK: " + login + " removed\r\n";
+}
+
+QString fn_logout(QString &role) {
+    if (role.isEmpty())
+        return "LOGOUT_ERR: Not authenticated\r\n";
+    role.clear();
+    return "LOGOUT_OK\r\n";
 }

@@ -137,10 +137,72 @@ backend_server/
 ├── mytcpserver.h/.cpp      ← TCP-сервер, буфер клиентов, роли
 ├── requesthandler.h/.cpp   ← парсинг команд, маршрутизация
 ├── functionstoserver.h/.cpp ← бизнес-логика (reg, auth, sha384, заглушки)
-└── databasemanager.h/.cpp  ← SQLite singleton (создаёт stego_app.db)
+├── databasemanager.h/.cpp  ← SQLite singleton (создаёт stego_app.db)
+└── func/                   ← алгоритмы (sha384, chord, genetic_path, stego)
+
+docs/
+├── Doxyfile                ← конфиг Doxygen
+└── doxygen-html/           ← сгенерированная HTML-документация
 ```
 
 **В будущем:** После первого запуска в папке `build/` появится файл `stego_app.db` — это база данных SQLite со всеми пользователями.
+
+---
+
+## Документация (Doxygen)
+
+В проекте используется [Doxygen](https://www.doxygen.org/) для автогенерации HTML-документации по исходному коду: классы, функции, параметры и краткие описания из комментариев `/** ... */` в `.h` и `.cpp` файлах.
+
+Конфигурация: `docs/Doxyfile`  
+Результат сборки: `docs/doxygen-html/html/`
+
+### Установка Doxygen
+
+**macOS:**
+```bash
+brew install doxygen
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt install doxygen
+```
+
+**Windows:** скачать с [doxygen.nl](https://www.doxygen.nl/download.html) или установить через Chocolatey: `choco install doxygen`
+
+### Сгенерировать документацию
+
+Из **корня репозитория**:
+
+```bash
+doxygen docs/Doxyfile
+```
+
+После успешной генерации откройте в браузере:
+
+```
+docs/doxygen-html/html/index.html
+```
+
+### Что попадает в документацию
+
+Doxygen сканирует:
+- `backend_server/` — сервер, обработчики, `func/` (sha384, chord, genetic_path, stego и др.)
+- `main.cpp`, `mainwindow.h`, `mainwindow.cpp` — клиентская часть
+
+Комментарии пишутся в стиле Doxygen, например:
+
+```cpp
+/**
+ * @brief Ищет кратчайший путь в графе с помощью ГА.
+ * @param payload start,end,from:to:weight,...
+ * @return path=...,length=... или строка ERR:...
+ */
+```
+
+### Пересборка после изменений кода
+
+После добавления или изменения функций перегенерируйте документацию той же командой `doxygen docs/Doxyfile`, чтобы HTML обновился.
 
 ---
 
